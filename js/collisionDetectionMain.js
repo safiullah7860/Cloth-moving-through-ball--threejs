@@ -144,15 +144,14 @@ function animate(time) {
   world.step(timeStep);
   sphereBody.position.set(
     movementRadius * Math.sin(time / 1000),
-    0,
+    -0.6,
     movementRadius * Math.cos(time / 1000)
   );
+  //CHANGE positon.set to change y axis of ball (set it to 0 to go in the midde, etc)
   sphereMesh.position.copy(sphereBody.position);
   renderer.render(scene, camera);
 }
-
 renderer.setAnimationLoop(animate);
-
 window.addEventListener("resize", function () {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
