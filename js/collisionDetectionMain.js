@@ -121,18 +121,14 @@ function updateParticules() {
     }
   }
 }
-
+//create sphere
 const sphereSize = 0.1;
 const movementRadius = 0.2;
-
 const sphereGeometry = new THREE.SphereGeometry(sphereSize);
-const sphereMat = new THREE.MeshPhongMaterial();
-
+const sphereMat = new THREE.MeshPhongMaterial({ color: 0x89cff0 });
 const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMat);
 scene.add(sphereMesh);
-
 const sphereShape = new CANNON.Sphere(sphereSize * 1.3);
-
 const sphereBody = new CANNON.Body({
   shape: sphereShape,
 });
