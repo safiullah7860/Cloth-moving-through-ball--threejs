@@ -137,28 +137,40 @@ const sphereBody = new CANNON.Body({
   shape: sphereShape,
 });
 world.addBody(sphereBody);
-// Create pole geometry and material
+// Create first pole
 const poleGeometry = new THREE.BoxGeometry(0.1, 2, 0.1);
 const poleMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
-
-// Create pole mesh and add it to the scene
 const poleMesh = new THREE.Mesh(poleGeometry, poleMaterial);
 poleMesh.position.set(0.53, -0.5, 0);
 scene.add(poleMesh);
-
-// Create pole body and add it to the world
 const poleShape = new CANNON.Box(new CANNON.Vec3(0.05, 0.5, 0.05));
 const poleBody = new CANNON.Body({ mass: 1, shape: poleShape });
 poleBody.position.set(0.5, -0.5, 0);
 world.addBody(poleBody);
-
-// Create constraint to attach pole to cloth
 world.addConstraint(
   new CANNON.PointToPointConstraint(
     poleBody,
     new CANNON.Vec3(0, 0.5, 0),
     particles[7][0],
     new CANNON.Vec3(-dist / 2, -dist / 2, 0)
+  )
+);
+// Create second pole geometry and material
+const secondPoleGeometry = new THREE.BoxGeometry(0.1, 2, 0.1);
+const secondPoleMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
+const secondPoleMesh = new THREE.Mesh(secondPoleGeometry, secondPoleMaterial);
+secondPoleMesh.position.set(-0.53, -0.5, 0);
+scene.add(secondPoleMesh);
+const secondPoleShape = new CANNON.Box(new CANNON.Vec3(0.05, 0.5, 0.05));
+const secondPoleBody = new CANNON.Body({ mass: 1, shape: secondPoleShape });
+secondPoleBody.position.set(0.5, -0.5, 0);
+world.addBody(secondPoleBody);
+world.addConstraint(
+  new CANNON.PointToPointConstraint(
+    secondPoleBody,
+    new CANNON.Vec3(0, 0.5, 0),
+    particles[7][1],
+    new CANNON.Vec3(dist / 2, -dist / 2, 0)
   )
 );
 
