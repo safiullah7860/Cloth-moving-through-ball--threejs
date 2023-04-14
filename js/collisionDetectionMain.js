@@ -173,7 +173,26 @@ world.addConstraint(
     new CANNON.Vec3(dist / 2, -dist / 2, 0)
   )
 );
-
+// Create third pole geometry and material
+const topPoleGeometry = new THREE.BoxGeometry(0.01, 2, 0.5);
+const topPoleMaterial = new THREE.MeshPhongMaterial({ color: 0xff00f });
+const topPoleMesh = new THREE.Mesh(topPoleGeometry, topPoleMaterial);
+topPoleMesh.position.set(0, 0.5, 0);
+topPoleMesh.scale.set(1, 0.5, 0.1);
+scene.add(topPoleMesh);
+topPoleMesh.rotation.z = Math.PI / 2;
+const topPoleShape = new CANNON.Box(new CANNON.Vec3(0.05, 0.5, 0.05));
+const topPoleBody = new CANNON.Body({ mass: 1, shape: topPoleShape });
+topPoleBody.position.set(0.5, -0.5, 0);
+world.addBody(topPoleBody);
+world.addConstraint(
+  new CANNON.PointToPointConstraint(
+    topPoleBody,
+    new CANNON.Vec3(0, 0.5, 0),
+    particles[7][2],
+    new CANNON.Vec3(dist / 2, -dist / 2, 0)
+  )
+);
 const timeStep = 1 / 60;
 function animate(time) {
   updateParticules();
