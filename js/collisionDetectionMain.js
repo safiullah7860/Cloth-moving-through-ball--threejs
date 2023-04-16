@@ -135,7 +135,7 @@ const sphereBody = new CANNON.Body({
 world.addBody(sphereBody);
 // Create first pole
 const poleGeometry = new THREE.BoxGeometry(0.1, 2, 0.1);
-const poleMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
+const poleMaterial = new THREE.MeshPhongMaterial({ color: 0x808080 });
 const poleMesh = new THREE.Mesh(poleGeometry, poleMaterial);
 poleMesh.position.set(0.53, -0.5, 0);
 scene.add(poleMesh);
@@ -153,7 +153,7 @@ world.addConstraint(
 );
 // Create second pole geometry and material
 const secondPoleGeometry = new THREE.BoxGeometry(0.1, 2, 0.1);
-const secondPoleMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
+const secondPoleMaterial = new THREE.MeshPhongMaterial({ color: 0x808080 });
 const secondPoleMesh = new THREE.Mesh(secondPoleGeometry, secondPoleMaterial);
 secondPoleMesh.position.set(-0.53, -0.5, 0);
 scene.add(secondPoleMesh);
@@ -171,7 +171,7 @@ world.addConstraint(
 );
 // Create third pole geometry and material
 const topPoleGeometry = new THREE.BoxGeometry(0.01, 2, 0.5);
-const topPoleMaterial = new THREE.MeshPhongMaterial({ color: 0xff00f });
+const topPoleMaterial = new THREE.MeshPhongMaterial({ color: 0x808080 });
 const topPoleMesh = new THREE.Mesh(topPoleGeometry, topPoleMaterial);
 topPoleMesh.position.set(0, 0.5, 0);
 topPoleMesh.scale.set(1, 0.5, 0.1);
