@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "cannon-es": "^0.20.0",
+    "lil-gui": "^0.18.1",
+    "python3": "^0.0.1",
+    "three": "^0.151.3"
+  }
+}

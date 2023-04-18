@@ -2,6 +2,10 @@ import * as CANNON from "cannon-es";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
+import {
+  GUI
+} from '/lil-gui.module.min.js';
+
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(0xa3a3a3);
@@ -190,8 +194,40 @@ world.addConstraint(
   )
 );
 const timeStep = 1 / 60;
+
+function createGUI() {
+    var options = {
+        enableWind: false,
+        enableSphere: true
+    }
+    const gui = new GUI();
+
+    
+    //add the option to enable wind
+    gui.add(options, 'enableWind').name('Enable Wind');
+    //add the option to enable ball
+    gui.add(options, 'enableSphere').name('Enable Ball');
+
+    if(options.enableSphere){
+        //call function to generate sphere
+    } else {
+        //perhaps call function to delete the sphere
+        //might need to send the sphereGeometry as a parameter
+
+    }
+
+    if(options.enableWind){
+        //call function to generate wind
+    } else {
+        //perhaps call function to delete wind
+        //not sure how to do that yet
+        
+    }
+}
 function animate(time) {
+  console.log("hello");
   updateParticules();
+  createGUI();
   world.step(timeStep);
   sphereBody.position.set(
     movementRadius * Math.sin(time / 1000),
