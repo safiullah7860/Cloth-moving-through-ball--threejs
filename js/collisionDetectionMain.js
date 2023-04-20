@@ -2,30 +2,38 @@ import * as CANNON from "cannon-es";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setClearColor(0xa3a3a3);
-document.body.appendChild(renderer.domElement);
-const scene = new THREE.Scene();
+import {
+  GUI
+} from '/lil-gui.module.min.js';
 
+
+let mouse = new THREE.Vector2();
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   24,
   window.innerWidth / window.innerHeight,
   1,
   2000
-);
+  );
+  const orbit = new OrbitControls(camera, renderer.domElement);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  const pointLight = new THREE.PointLight(0xffffff, 0.5);
 
-const orbit = new OrbitControls(camera, renderer.domElement);
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0xa3a3a3);
+document.body.appendChild(renderer.domElement);
 
 camera.position.set(4, 1, 1);
 camera.lookAt(0, 0, 0);
 
+
 orbit.update();
 
 // Add lights
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
-const pointLight = new THREE.PointLight(0xffffff, 0.5);
 pointLight.position.set(10, 10, 10);
 camera.add(pointLight);
 scene.add(camera);
@@ -122,17 +130,24 @@ function updateParticules() {
   }
 }
 //create sphere
+
 const sphereSize = 0.1;
-const movementRadius = 0.2;
 const sphereGeometry = new THREE.SphereGeometry(sphereSize);
 const sphereMat = new THREE.MeshPhongMaterial({ color: 0x89cff0 });
-const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMat);
-scene.add(sphereMesh);
 const sphereShape = new CANNON.Sphere(sphereSize * 1.3);
 const sphereBody = new CANNON.Body({
   shape: sphereShape,
 });
-world.addBody(sphereBody);
+const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMat);
+const movementRadius = 0.2;
+
+function addSphere(){
+  scene.add(sphereMesh);
+  world.addBody(sphereBody);
+  //need to account for sphere placement
+  //need to account for sphere orbiting. 
+}
+
 // Create first pole
 const poleGeometry = new THREE.BoxGeometry(0.1, 2, 0.1);
 const poleMaterial = new THREE.MeshPhongMaterial({ color: 0x808080 });
@@ -190,17 +205,88 @@ world.addConstraint(
   )
 );
 const timeStep = 1 / 60;
+
+const options = {
+  enableWind: false,
+  enableSphere: false
+}
+function createGUI() {
+    const gui = new GUI();
+    
+    //add the option to enable wind
+    gui.add(options, 'enableWind').name('Enable Wind');
+    //add the option to enable ball
+    gui.add(options, 'enableSphere').name('Enable Ball');
+}
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function mouseMove(event) {
+  event.preventDefault();
+}
+
+function mouseDown(event) {
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+}
+
+createGUI();
+
 function animate(time) {
   updateParticules();
   world.step(timeStep);
-  sphereBody.position.set(
-    movementRadius * Math.sin(time / 1000),
-    -0.6,
-    movementRadius * Math.cos(time / 1000)
-  );
-  //CHANGE positon.set to change y axis of ball (set it to 0 to go in the midde, etc)
-  sphereMesh.position.copy(sphereBody.position);
+
+  //if the option to enable sphere is selected, the sphere exists
+  if(options.enableSphere){
+    //TODO: call function to generate sphere
+    console.log("sphere enabled");
+
+    addSphere();
+
+    sphereBody.position.set(
+      movementRadius * Math.sin(time / 1000),
+      -0.6,
+      movementRadius * Math.cos(time / 1000)
+      );
+    //CHANGE positon.set to change y axis of ball (set it to 0 to go in the midde, etc)
+    sphereMesh.position.copy(sphereBody.position);
+
+  } else {//else, it is meant to be removed. 
+    //TODO: perhaps call function to delete the sphere
+    //TODO: might need to send the sphereGeometry as a parameter
+    // remove the mesh from the scene
+    scene.remove(sphereMesh);
+
+    // remove the body from the physics world
+    world.removeBody(sphereBody);
+
+    // dispose the geometry and material to free up memory
+    sphereGeometry.dispose();
+    sphereMat.dispose();
+  }
+
+  if(options.enableWind){
+    //TODO: call function to generate wind
+
+    options.enableWind = false;
+  } else {
+      //TODO: perhaps call function to delete wind
+      //TODO: not sure how to do that yet
+      options.enableWind = true;
+  }
+
+
+
   renderer.render(scene, camera);
+  
+  window.addEventListener("resize", onWindowResize);
+  window.addEventListener("mousedown", mouseDown, false);
+  window.addEventListener("mousemove", mouseMove, false);
+
 }
 renderer.setAnimationLoop(animate);
 window.addEventListener("resize", function () {
