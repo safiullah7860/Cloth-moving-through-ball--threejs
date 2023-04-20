@@ -43,9 +43,9 @@ const world = new CANNON.World({
 });
 
 const Nx = 15;
-const Ny = 15;
+const Ny = 20;
 const mass = 1;
-const clothSize = 1;
+const clothSize = 0.75;
 const dist = clothSize / Nx;
 
 const shape = new CANNON.Particle();
@@ -238,7 +238,7 @@ function animate(time) {
   //if the option to enable sphere is selected, the sphere exists
   if (options.enableSphere) {
     //TODO: call function to generate sphere
-    console.log("sphere enabled");
+    //console.log("sphere enabled");
 
     addSphere();
 
@@ -266,7 +266,13 @@ function animate(time) {
 
   if (options.enableWind) {
     //TODO: call function to generate wind
-    console.log("hell");
+    const wind = new CANNON.Vec3(1, 2, 3);
+    for (let i = 0; i < Nx + 1; i++) {
+      for (let j = 0; j < Ny + 1; j++) {
+        const particle = particles[i][j];
+        particle.applyForce(wind, particle.position);
+      }
+    }
   } else {
     //TODO: perhaps call function to delete wind
     //TODO: not sure how to do that yet
