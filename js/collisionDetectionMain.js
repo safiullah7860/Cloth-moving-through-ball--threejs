@@ -2,10 +2,7 @@ import * as CANNON from "cannon-es";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-import {
-  GUI
-} from '/lil-gui.module.min.js';
-
+import { GUI } from "/lil-gui.module.min.js";
 
 let mouse = new THREE.Vector2();
 
@@ -16,11 +13,10 @@ const camera = new THREE.PerspectiveCamera(
   window.innerWidth / window.innerHeight,
   1,
   2000
-  );
-  const orbit = new OrbitControls(camera, renderer.domElement);
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-  const pointLight = new THREE.PointLight(0xffffff, 0.5);
-
+);
+const orbit = new OrbitControls(camera, renderer.domElement);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+const pointLight = new THREE.PointLight(0xffffff, 0.5);
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(0xa3a3a3);
@@ -28,7 +24,6 @@ document.body.appendChild(renderer.domElement);
 
 camera.position.set(4, 1, 1);
 camera.lookAt(0, 0, 0);
-
 
 orbit.update();
 
@@ -141,11 +136,11 @@ const sphereBody = new CANNON.Body({
 const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMat);
 const movementRadius = 0.2;
 
-function addSphere(){
+function addSphere() {
   scene.add(sphereMesh);
   world.addBody(sphereBody);
   //need to account for sphere placement
-  //need to account for sphere orbiting. 
+  //need to account for sphere orbiting.
 }
 
 // Create first pole
@@ -208,15 +203,15 @@ const timeStep = 1 / 60;
 
 const options = {
   enableWind: false,
-  enableSphere: false
-}
+  enableSphere: false,
+};
 function createGUI() {
-    const gui = new GUI();
-    
-    //add the option to enable wind
-    gui.add(options, 'enableWind').name('Enable Wind');
-    //add the option to enable ball
-    gui.add(options, 'enableSphere').name('Enable Ball');
+  const gui = new GUI();
+
+  //add the option to enable wind
+  gui.add(options, "enableWind").name("Enable Wind");
+  //add the option to enable ball
+  gui.add(options, "enableSphere").name("Enable Ball");
 }
 
 function onWindowResize() {
@@ -241,7 +236,7 @@ function animate(time) {
   world.step(timeStep);
 
   //if the option to enable sphere is selected, the sphere exists
-  if(options.enableSphere){
+  if (options.enableSphere) {
     //TODO: call function to generate sphere
     console.log("sphere enabled");
 
@@ -251,11 +246,11 @@ function animate(time) {
       movementRadius * Math.sin(time / 1000),
       -0.6,
       movementRadius * Math.cos(time / 1000)
-      );
+    );
     //CHANGE positon.set to change y axis of ball (set it to 0 to go in the midde, etc)
     sphereMesh.position.copy(sphereBody.position);
-
-  } else {//else, it is meant to be removed. 
+  } else {
+    //else, it is meant to be removed.
     //TODO: perhaps call function to delete the sphere
     //TODO: might need to send the sphereGeometry as a parameter
     // remove the mesh from the scene
@@ -269,24 +264,19 @@ function animate(time) {
     sphereMat.dispose();
   }
 
-  if(options.enableWind){
+  if (options.enableWind) {
     //TODO: call function to generate wind
-
-    options.enableWind = false;
+    console.log("hell");
   } else {
-      //TODO: perhaps call function to delete wind
-      //TODO: not sure how to do that yet
-      options.enableWind = true;
+    //TODO: perhaps call function to delete wind
+    //TODO: not sure how to do that yet
   }
 
-
-
   renderer.render(scene, camera);
-  
+
   window.addEventListener("resize", onWindowResize);
   window.addEventListener("mousedown", mouseDown, false);
   window.addEventListener("mousemove", mouseMove, false);
-
 }
 renderer.setAnimationLoop(animate);
 window.addEventListener("resize", function () {
