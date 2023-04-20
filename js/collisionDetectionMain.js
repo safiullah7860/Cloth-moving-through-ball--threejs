@@ -6,30 +6,34 @@ import {
   GUI
 } from '/lil-gui.module.min.js';
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setClearColor(0xa3a3a3);
-document.body.appendChild(renderer.domElement);
-const scene = new THREE.Scene();
 
+let mouse = new THREE.Vector2();
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   24,
   window.innerWidth / window.innerHeight,
   1,
   2000
-);
+  );
+  const orbit = new OrbitControls(camera, renderer.domElement);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  const pointLight = new THREE.PointLight(0xffffff, 0.5);
 
-const orbit = new OrbitControls(camera, renderer.domElement);
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0xa3a3a3);
+document.body.appendChild(renderer.domElement);
 
 camera.position.set(4, 1, 1);
 camera.lookAt(0, 0, 0);
 
+
 orbit.update();
 
 // Add lights
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
-const pointLight = new THREE.PointLight(0xffffff, 0.5);
 pointLight.position.set(10, 10, 10);
 camera.add(pointLight);
 scene.add(camera);
@@ -195,10 +199,11 @@ world.addConstraint(
 );
 const timeStep = 1 / 60;
 
+
 function createGUI() {
     var options = {
         enableWind: false,
-        enableSphere: true
+        enableSphere: false
     }
     const gui = new GUI();
 
@@ -209,34 +214,71 @@ function createGUI() {
     gui.add(options, 'enableSphere').name('Enable Ball');
 
     if(options.enableSphere){
-        //call function to generate sphere
-    } else {
-        //perhaps call function to delete the sphere
-        //might need to send the sphereGeometry as a parameter
+        //TODO: call function to generate sphere
 
+
+        options.enableSphere = true;
+
+    } else {
+        //TODO: perhaps call function to delete the sphere
+        //TODO: might need to send the sphereGeometry as a parameter
+        // remove the mesh from the scene
+        scene.remove(sphereMesh);
+
+        // remove the body from the physics world
+        world.removeBody(sphereBody);
+
+        // dispose the geometry and material to free up memory
+        sphereGeometry.dispose();
+        sphereMat.dispose();
+        options.enableSphere = true;
     }
 
     if(options.enableWind){
-        //call function to generate wind
+        //TODO: call function to generate wind
+        options.enableWind = false;
     } else {
-        //perhaps call function to delete wind
-        //not sure how to do that yet
-        
+        //TODO: perhaps call function to delete wind
+        //TODO: not sure how to do that yet
+        options.enableWind = true;
     }
 }
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function mouseMove(event) {
+  event.preventDefault();
+}
+
+function mouseDown(event) {
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+}
+
+createGUI();
+
 function animate(time) {
-  console.log("hello");
   updateParticules();
-  createGUI();
   world.step(timeStep);
   sphereBody.position.set(
     movementRadius * Math.sin(time / 1000),
     -0.6,
     movementRadius * Math.cos(time / 1000)
-  );
-  //CHANGE positon.set to change y axis of ball (set it to 0 to go in the midde, etc)
-  sphereMesh.position.copy(sphereBody.position);
-  renderer.render(scene, camera);
+    );
+    //CHANGE positon.set to change y axis of ball (set it to 0 to go in the midde, etc)
+    sphereMesh.position.copy(sphereBody.position);
+    renderer.render(scene, camera);
+    
+    
+
+    window.addEventListener("resize", onWindowResize);
+    window.addEventListener("mousedown", mouseDown, false);
+    window.addEventListener("mousemove", mouseMove, false);
+
 }
 renderer.setAnimationLoop(animate);
 window.addEventListener("resize", function () {
