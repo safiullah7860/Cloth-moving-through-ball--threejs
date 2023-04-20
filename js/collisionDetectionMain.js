@@ -130,17 +130,24 @@ function updateParticules() {
   }
 }
 //create sphere
+
 const sphereSize = 0.1;
-const movementRadius = 0.2;
 const sphereGeometry = new THREE.SphereGeometry(sphereSize);
 const sphereMat = new THREE.MeshPhongMaterial({ color: 0x89cff0 });
-const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMat);
-scene.add(sphereMesh);
 const sphereShape = new CANNON.Sphere(sphereSize * 1.3);
 const sphereBody = new CANNON.Body({
   shape: sphereShape,
 });
-world.addBody(sphereBody);
+const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMat);
+const movementRadius = 0.2;
+
+function addSphere(){
+  scene.add(sphereMesh);
+  world.addBody(sphereBody);
+  //need to account for sphere placement
+  //need to account for sphere orbiting. 
+}
+
 // Create first pole
 const poleGeometry = new THREE.BoxGeometry(0.1, 2, 0.1);
 const poleMaterial = new THREE.MeshPhongMaterial({ color: 0x808080 });
@@ -199,49 +206,17 @@ world.addConstraint(
 );
 const timeStep = 1 / 60;
 
-
+const options = {
+  enableWind: false,
+  enableSphere: false
+}
 function createGUI() {
-    var options = {
-        enableWind: false,
-        enableSphere: false
-    }
     const gui = new GUI();
-
     
     //add the option to enable wind
     gui.add(options, 'enableWind').name('Enable Wind');
     //add the option to enable ball
     gui.add(options, 'enableSphere').name('Enable Ball');
-
-    if(options.enableSphere){
-        //TODO: call function to generate sphere
-
-
-        options.enableSphere = true;
-
-    } else {
-        //TODO: perhaps call function to delete the sphere
-        //TODO: might need to send the sphereGeometry as a parameter
-        // remove the mesh from the scene
-        scene.remove(sphereMesh);
-
-        // remove the body from the physics world
-        world.removeBody(sphereBody);
-
-        // dispose the geometry and material to free up memory
-        sphereGeometry.dispose();
-        sphereMat.dispose();
-        options.enableSphere = true;
-    }
-
-    if(options.enableWind){
-        //TODO: call function to generate wind
-        options.enableWind = false;
-    } else {
-        //TODO: perhaps call function to delete wind
-        //TODO: not sure how to do that yet
-        options.enableWind = true;
-    }
 }
 
 function onWindowResize() {
@@ -264,20 +239,53 @@ createGUI();
 function animate(time) {
   updateParticules();
   world.step(timeStep);
-  sphereBody.position.set(
-    movementRadius * Math.sin(time / 1000),
-    -0.6,
-    movementRadius * Math.cos(time / 1000)
-    );
+
+  //if the option to enable sphere is selected, the sphere exists
+  if(options.enableSphere){
+    //TODO: call function to generate sphere
+    console.log("sphere enabled");
+
+    addSphere();
+
+    sphereBody.position.set(
+      movementRadius * Math.sin(time / 1000),
+      -0.6,
+      movementRadius * Math.cos(time / 1000)
+      );
     //CHANGE positon.set to change y axis of ball (set it to 0 to go in the midde, etc)
     sphereMesh.position.copy(sphereBody.position);
-    renderer.render(scene, camera);
-    
-    
 
-    window.addEventListener("resize", onWindowResize);
-    window.addEventListener("mousedown", mouseDown, false);
-    window.addEventListener("mousemove", mouseMove, false);
+  } else {//else, it is meant to be removed. 
+    //TODO: perhaps call function to delete the sphere
+    //TODO: might need to send the sphereGeometry as a parameter
+    // remove the mesh from the scene
+    scene.remove(sphereMesh);
+
+    // remove the body from the physics world
+    world.removeBody(sphereBody);
+
+    // dispose the geometry and material to free up memory
+    sphereGeometry.dispose();
+    sphereMat.dispose();
+  }
+
+  if(options.enableWind){
+    //TODO: call function to generate wind
+
+    options.enableWind = false;
+  } else {
+      //TODO: perhaps call function to delete wind
+      //TODO: not sure how to do that yet
+      options.enableWind = true;
+  }
+
+
+
+  renderer.render(scene, camera);
+  
+  window.addEventListener("resize", onWindowResize);
+  window.addEventListener("mousedown", mouseDown, false);
+  window.addEventListener("mousemove", mouseMove, false);
 
 }
 renderer.setAnimationLoop(animate);
