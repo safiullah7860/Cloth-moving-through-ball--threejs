@@ -237,9 +237,6 @@ function animate(time) {
 
   //if the option to enable sphere is selected, the sphere exists
   if (options.enableSphere) {
-    //TODO: call function to generate sphere
-    //console.log("sphere enabled");
-
     addSphere();
 
     sphereBody.position.set(
@@ -251,8 +248,7 @@ function animate(time) {
     sphereMesh.position.copy(sphereBody.position);
   } else {
     //else, it is meant to be removed.
-    //TODO: perhaps call function to delete the sphere
-    //TODO: might need to send the sphereGeometry as a parameter
+    
     // remove the mesh from the scene
     scene.remove(sphereMesh);
 
@@ -265,7 +261,6 @@ function animate(time) {
   }
 
   if (options.enableWind) {
-    //TODO: call function to generate wind
     const wind = new CANNON.Vec3(1, 2, 3);
     for (let i = 0; i < Nx + 1; i++) {
       for (let j = 0; j < Ny + 1; j++) {
@@ -273,9 +268,6 @@ function animate(time) {
         particle.applyForce(wind, particle.position);
       }
     }
-  } else {
-    //TODO: perhaps call function to delete wind
-    //TODO: not sure how to do that yet
   }
 
   renderer.render(scene, camera);
