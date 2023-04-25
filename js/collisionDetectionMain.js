@@ -144,10 +144,10 @@ function addSphere() {
 }
 
 // Create first pole
-const poleGeometry = new THREE.BoxGeometry(0.1, 2, 0.1);
+const poleGeometry = new THREE.BoxGeometry(0.1, 1.2, 0.1);
 const poleMaterial = new THREE.MeshPhongMaterial({ color: 0x808080 });
 const poleMesh = new THREE.Mesh(poleGeometry, poleMaterial);
-poleMesh.position.set(0.53, -0.5, 0);
+poleMesh.position.set(0.53, -0.1, 0);
 scene.add(poleMesh);
 const poleShape = new CANNON.Box(new CANNON.Vec3(0.05, 0.5, 0.05));
 const poleBody = new CANNON.Body({ mass: 1, shape: poleShape });
@@ -162,10 +162,10 @@ world.addConstraint(
   )
 );
 // Create second pole geometry and material
-const secondPoleGeometry = new THREE.BoxGeometry(0.1, 2, 0.1);
+const secondPoleGeometry = new THREE.BoxGeometry(0.1, 1.2, 0.1);
 const secondPoleMaterial = new THREE.MeshPhongMaterial({ color: 0x808080 });
 const secondPoleMesh = new THREE.Mesh(secondPoleGeometry, secondPoleMaterial);
-secondPoleMesh.position.set(-0.53, -0.5, 0);
+secondPoleMesh.position.set(-0.53, -0.1, 0);
 scene.add(secondPoleMesh);
 const secondPoleShape = new CANNON.Box(new CANNON.Vec3(0.05, 0.5, 0.05));
 const secondPoleBody = new CANNON.Body({ mass: 1, shape: secondPoleShape });
@@ -248,7 +248,7 @@ function animate(time) {
     sphereMesh.position.copy(sphereBody.position);
   } else {
     //else, it is meant to be removed.
-    
+
     // remove the mesh from the scene
     scene.remove(sphereMesh);
 
