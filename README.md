@@ -1,4 +1,4 @@
-# Cloth-moving-through-ball--threejs
+# Ball-moving-through-Cloth--threejs
 
 By: Safiullah Baig, Eli Mojica, Matthew Duran
 
