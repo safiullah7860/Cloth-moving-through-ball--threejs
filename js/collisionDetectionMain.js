@@ -1,4 +1,4 @@
-import * as CANNON from "cannon-es";
+import * as CANNON from 'cannon-es';
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
